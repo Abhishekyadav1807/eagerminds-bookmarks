@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EagerMinds Bookmarks
 
-## Getting Started
+A full-stack bookmark management application built with Next.js, Supabase, Tailwind CSS, and Resend.
 
-First, run the development server:
+## Live Demo
+
+https://eagerminds-bookmarks-eight.vercel.app/login
+
+## GitHub Repository
+
+https://github.com/Abhishekyadav1807/eagerminds-bookmarks
+
+## Features
+
+* User Authentication (Signup/Login/Logout)
+* Protected Dashboard
+* Bookmark CRUD (Create, Read, Update, Delete)
+* Public and Private Bookmarks
+* Unique User Handles
+* Public Profile Pages
+* Welcome Emails via Resend
+* Row Level Security (RLS) with Supabase
+* Responsive UI with Tailwind CSS
+
+## Tech Stack
+
+* Next.js 16
+* TypeScript
+* Tailwind CSS
+* Supabase
+* Resend
+* Vercel
+
+## Environment Variables
+
+Create a `.env.local` file:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+RESEND_API_KEY=your_resend_api_key
+RESEND_FROM_EMAIL=EagerMinds Bookmarks <onboarding@resend.dev>
+```
+
+## Local Development
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Deployment
 
-## Learn More
+The application is deployed on Vercel.
 
-To learn more about Next.js, take a look at the following resources:
+Deployment steps:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Push code to GitHub.
+2. Import repository into Vercel.
+3. Configure environment variables.
+4. Deploy.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Application Flow
 
-## Deploy on Vercel
+1. User signs up.
+2. Welcome email is sent through Resend.
+3. User logs in.
+4. User manages bookmarks from the dashboard.
+5. Public bookmarks are displayed on the user's public profile page.
+6. Private bookmarks remain visible only to the owner.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Security
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+* Supabase Authentication
+* Row Level Security (RLS)
+* Protected Dashboard Routes
+* Secure Server Actions
+* Environment Variables for Secrets
+
+## Author
+
+Abhishek Yadav
