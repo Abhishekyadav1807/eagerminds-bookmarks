@@ -9,15 +9,20 @@ import type { Profile } from "@/types/profile";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   const [{ data, error }, { data: profile }] = await Promise.all([
-    supabase
-      .from("bookmarks")
-      .select("id, user_id, title, url, is_public")
-      .order("id", { ascending: false }),
+    user
+      ? supabase
+          .from("bookmarks")
+          .select("id, user_id, title, url, is_public")
+          .eq("user_id", user.id)
+          .order("id", { ascending: false })
+      : Promise.resolve({ data: [], error: null }),
+
     user
       ? supabase
           .from("profiles")
@@ -29,9 +34,14 @@ export default async function DashboardPage() {
 
   const bookmarks = (data ?? []) as Bookmark[];
   const currentProfile = profile as Profile | null;
+
   const claimedHandle = getClaimedHandle(currentProfile?.handle);
+
   const siteUrl = await getSiteUrl();
-  const publicProfileUrl = claimedHandle ? `${siteUrl}/${claimedHandle}` : null;
+
+  const publicProfileUrl = claimedHandle
+    ? `${siteUrl}/${claimedHandle}`
+    : null;
 
   return (
     <div className="space-y-8">
@@ -58,6 +68,7 @@ export default async function DashboardPage() {
           <h3 className="text-base font-medium text-zinc-900 dark:text-zinc-50">
             Saved bookmarks
           </h3>
+
           <span className="text-sm text-zinc-500 dark:text-zinc-400">
             {bookmarks.length} {bookmarks.length === 1 ? "item" : "items"}
           </span>

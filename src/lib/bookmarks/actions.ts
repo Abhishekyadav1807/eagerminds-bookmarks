@@ -11,6 +11,7 @@ const UNAUTHENTICATED_ERROR = "You must be signed in to manage bookmarks.";
 
 async function requireUser() {
   const supabase = await createClient();
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -20,16 +21,21 @@ async function requireUser() {
 
 export async function createBookmark(input: unknown): Promise<ActionResult> {
   const { supabase, user } = await requireUser();
+
   if (!user) {
     return { error: UNAUTHENTICATED_ERROR };
   }
 
   const parsed = bookmarkInputSchema.safeParse(input);
+
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Invalid bookmark data" };
+    return {
+      error: parsed.error.issues[0]?.message ?? "Invalid bookmark data",
+    };
   }
 
   const profileResult = await ensureUserProfileForUser(supabase, user);
+
   if ("error" in profileResult) {
     return profileResult;
   }
@@ -46,6 +52,7 @@ export async function createBookmark(input: unknown): Promise<ActionResult> {
   }
 
   revalidatePath("/dashboard");
+
   return { success: true };
 }
 
@@ -54,13 +61,17 @@ export async function updateBookmark(
   input: unknown
 ): Promise<ActionResult> {
   const { supabase, user } = await requireUser();
+
   if (!user) {
     return { error: UNAUTHENTICATED_ERROR };
   }
 
   const parsed = bookmarkInputSchema.safeParse(input);
+
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Invalid bookmark data" };
+    return {
+      error: parsed.error.issues[0]?.message ?? "Invalid bookmark data",
+    };
   }
 
   const { error } = await supabase
@@ -70,34 +81,45 @@ export async function updateBookmark(
       url: parsed.data.url,
       is_public: parsed.data.is_public,
     })
-    .eq("id", id);
+    .eq("id", id)
+    .eq("user_id", user.id);
 
   if (error) {
     return { error: error.message };
   }
 
   revalidatePath("/dashboard");
+
   return { success: true };
 }
 
 export async function deleteBookmark(id: string): Promise<ActionResult> {
   const { supabase, user } = await requireUser();
+
   if (!user) {
     return { error: UNAUTHENTICATED_ERROR };
   }
 
-  const { error } = await supabase.from("bookmarks").delete().eq("id", id);
+  const { error } = await supabase
+    .from("bookmarks")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
 
   if (error) {
     return { error: error.message };
   }
 
   revalidatePath("/dashboard");
+
   return { success: true };
 }
 
-export async function toggleBookmarkVisibility(id: string): Promise<ActionResult> {
+export async function toggleBookmarkVisibility(
+  id: string
+): Promise<ActionResult> {
   const { supabase, user } = await requireUser();
+
   if (!user) {
     return { error: UNAUTHENTICATED_ERROR };
   }
@@ -106,6 +128,7 @@ export async function toggleBookmarkVisibility(id: string): Promise<ActionResult
     .from("bookmarks")
     .select("is_public")
     .eq("id", id)
+    .eq("user_id", user.id)
     .single();
 
   if (fetchError) {
@@ -114,13 +137,17 @@ export async function toggleBookmarkVisibility(id: string): Promise<ActionResult
 
   const { error } = await supabase
     .from("bookmarks")
-    .update({ is_public: !bookmark.is_public })
-    .eq("id", id);
+    .update({
+      is_public: !bookmark.is_public,
+    })
+    .eq("id", id)
+    .eq("user_id", user.id);
 
   if (error) {
     return { error: error.message };
   }
 
   revalidatePath("/dashboard");
+
   return { success: true };
 }
